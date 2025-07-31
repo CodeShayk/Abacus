@@ -1,0 +1,6 @@
+@Abacus.API_HostAddress = http://localhost:5096
+
+GET {{Abacus.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
