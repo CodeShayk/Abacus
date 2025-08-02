@@ -1,28 +1,29 @@
 using Abacus.API.Contracts;
-using Abacus.API.Services;
+using Abacus.Core.Model;
+using Abacus.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abacus.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/workflow/[controller]")]
     public class TemplatesController : ControllerBase
     {
-        private readonly ITemplateService _templateService;
+        private readonly ITemplateManager _templateManager;
         private readonly ILogger<TemplatesController> _logger;
 
-        public TemplatesController(ITemplateService templateService, ILogger<TemplatesController> logger)
+        public TemplatesController(ITemplateManager templateManager, ILogger<TemplatesController> logger)
         {
-            _templateService = templateService;
+            _templateManager = templateManager;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkflowTemplate>>> GetAllTemplates()
+        public async Task<ActionResult<IEnumerable<Contracts.WorkflowTemplate>>> GetAllTemplates()
         {
             try
             {
-                var templates = await _templateService.GetAllTemplatesAsync();
+                var templates = await _templateManager.GetTemplates();
                 return Ok(templates);
             }
             catch (Exception ex)
@@ -33,11 +34,11 @@ namespace Abacus.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<WorkflowTemplate>> GetTemplate(int id)
+        public async Task<ActionResult<Contracts.WorkflowTemplate>> GetTemplate(int id)
         {
             try
             {
-                var template = await _templateService.GetTemplateByIdAsync(id);
+                var template = await _templateManager.GetTemplate(id);
                 return Ok(template);
             }
             catch (KeyNotFoundException)
@@ -52,11 +53,29 @@ namespace Abacus.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<WorkflowTemplate>> CreateTemplate([FromBody] WorkflowTemplate template)
+        public async Task<ActionResult<Contracts.WorkflowTemplate>> CreateTemplate([FromBody] Contracts.WorkflowTemplate template)
         {
             try
             {
-                var createdTemplate = await _templateService.CreateTemplateAsync(template);
+                var createdTemplate = await _templateManager.CreateTemplate(new Core.Model.WorkflowTemplate
+                {
+                    Name = template.Name,
+                    Description = template.Description,
+                    Tasks = template.Tasks?.Select(x => new Core.Model.WorkflowTask
+                    {
+                        Name = x.Name,
+                        Description = x.Description,
+                        IsStartTask = x.IsStartTask,
+                        IsEndTask = x.IsEndTask,
+                        Type = Enum.Parse<TaskType>(x.Type)
+                    }).ToList() ?? new List<Core.Model.WorkflowTask>(),
+                    Transitions = template.Transitions?.Select(x => new Core.Model.WorkflowTransition
+                    {
+                        FromTaskId = x.FromTask.Id,
+                        ToTaskId = x.ToTask.Id,
+                        Condition = new Core.Model.TriggerCondition { Condition = x.Condition?.Condition },
+                    }).ToList() ?? new List<Core.Model.WorkflowTransition>()
+                });
                 return CreatedAtAction(nameof(GetTemplate), new { id = createdTemplate.Id }, createdTemplate);
             }
             catch (ArgumentException ex)
@@ -71,11 +90,33 @@ namespace Abacus.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<WorkflowTemplate>> UpdateTemplate(int id, [FromBody] WorkflowTemplate template)
+        public async Task<ActionResult<Contracts.WorkflowTemplate>> UpdateTemplate(int id, [FromBody] Contracts.WorkflowTemplate template)
         {
             try
             {
-                var updatedTemplate = await _templateService.UpdateTemplateAsync(id, template);
+                var updatedTemplate = await _templateManager.UpdateTemplate(new Core.Model.WorkflowTemplate
+                {
+                    Id = id,
+                    Name = template.Name,
+                    Description = template.Description,
+                    Tasks = template.Tasks?.Select(x => new Core.Model.WorkflowTask
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        IsStartTask = x.IsStartTask,
+                        IsEndTask = x.IsEndTask,
+                        Type = Enum.Parse<TaskType>(x.Type)
+                    }).ToList() ?? new List<Core.Model.WorkflowTask>(),
+                    Transitions = template.Transitions?.Select(x => new Core.Model.WorkflowTransition
+                    {
+                        Id = x.Id,
+                        FromTaskId = x.FromTask.Id,
+                        ToTaskId = x.ToTask.Id,
+                        Condition = new Core.Model.TriggerCondition { Condition = x.Condition?.Condition },
+                    }).ToList() ?? new List<Core.Model.WorkflowTransition>()
+                });
+
                 return Ok(updatedTemplate);
             }
             catch (KeyNotFoundException)
@@ -98,7 +139,7 @@ namespace Abacus.API.Controllers
         {
             try
             {
-                await _templateService.DeleteTemplateAsync(id);
+                await _templateManager.DeleteTemplate(id);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -117,8 +158,8 @@ namespace Abacus.API.Controllers
         {
             try
             {
-                var template = await _templateService.GetTemplateByIdAsync(id);
-                var isValid = await _templateService.ValidateTemplateAsync(template);
+                var template = await _templateManager.GetTemplate(id);
+                var isValid = await _templateManager.ValidateTemplate(template);
                 return Ok(new { IsValid = isValid });
             }
             catch (KeyNotFoundException)

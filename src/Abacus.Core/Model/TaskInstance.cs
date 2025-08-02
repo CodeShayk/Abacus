@@ -1,4 +1,4 @@
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public class TaskInstance
     {
@@ -18,7 +18,7 @@ namespace Abacus.API.Model
 
         public string Output { get; set; } // JSON output data
 
-        public string Outcome { get; set; } // Task outcome (success, failure, custom outcomes)
+        public TaskOutcome Outcome { get; set; }
 
         public string ErrorMessage { get; set; }
 

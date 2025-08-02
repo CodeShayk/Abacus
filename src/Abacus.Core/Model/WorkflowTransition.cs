@@ -1,6 +1,6 @@
 // Models/WorkflowTemplate.cs
 // Models/WorkflowTransition.cs
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public class WorkflowTransition
     {
@@ -8,11 +8,9 @@ namespace Abacus.API.Model
 
         public string Name { get; set; }
 
-        public string Condition { get; set; } // JSON condition or expression
+        public TriggerCondition Condition { get; set; } // JSON condition or expression
 
-        public TriggerType TriggerType { get; set; }
-
-        public string TriggerValue { get; set; } // Outcome value or event name
+        public Trigger Trigger { get; set; }
 
         // Foreign Keys
         public int WorkflowTemplateId { get; set; }

@@ -1,11 +1,8 @@
-// Models/WorkflowTemplate.cs
-// Models/WorkflowTransition.cs
-
-// Models/WorkflowInstance.cs
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public enum WorkflowStatus
     {
+        Ready,
         Running,
         Completed,
         Failed,

@@ -1,7 +1,7 @@
 // Models/WorkflowTemplate.cs
 using System.ComponentModel.DataAnnotations;
 
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public class WorkflowTask
     {

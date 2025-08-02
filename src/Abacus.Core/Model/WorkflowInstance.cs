@@ -1,20 +1,15 @@
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public class WorkflowInstance
     {
         public int Id { get; set; }
 
-        public string EntityId { get; set; } // ID of the entity this workflow is running for
-
-        public string EntityType { get; set; } // Type of the entity
-
+        public Context Context { get; set; } // ID of the entity this workflow is running for
         public WorkflowStatus Status { get; set; }
 
         public DateTime StartedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? CompletedAt { get; set; }
-
-        public string Context { get; set; } // JSON context data
 
         public string ErrorMessage { get; set; }
 

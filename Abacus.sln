@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{57213CE3-4D4F-4D95-B0E6-BA8B5DE52671}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus.Core", "src\Abacus.Core\Abacus.Core.csproj", "{A69E3842-2B51-411B-A1F8-DD7A8EAF6933}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,12 +21,17 @@ Global
 		{505712F3-E921-454F-8008-3558F062C9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{505712F3-E921-454F-8008-3558F062C9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{505712F3-E921-454F-8008-3558F062C9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69E3842-2B51-411B-A1F8-DD7A8EAF6933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69E3842-2B51-411B-A1F8-DD7A8EAF6933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69E3842-2B51-411B-A1F8-DD7A8EAF6933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69E3842-2B51-411B-A1F8-DD7A8EAF6933}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{505712F3-E921-454F-8008-3558F062C9D7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A69E3842-2B51-411B-A1F8-DD7A8EAF6933} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA3B47C2-AC9C-4AF4-9ACF-CC86C463297C}

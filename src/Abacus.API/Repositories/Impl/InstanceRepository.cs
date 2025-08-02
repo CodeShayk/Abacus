@@ -1,10 +1,12 @@
+using System.Linq.Expressions;
 using Abacus.API.Data;
-using Abacus.API.Model;
+using Abacus.Core;
+using Abacus.Core.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Abacus.API.Repositories.Impl
 {
-    public class InstanceRepository : IInstanceRepository
+    public class InstanceRepository : IDataProvider<WorkflowInstance>
     {
         private readonly WorkflowDbContext _context;
 
@@ -13,22 +15,18 @@ namespace Abacus.API.Repositories.Impl
             _context = context;
         }
 
-        public async Task<IEnumerable<WorkflowInstance>> GetAllAsync()
+        public async Task<IEnumerable<WorkflowInstance>> GetAll(Expression<Func<WorkflowInstance, bool>> expression = null)
         {
             return await _context.WorkflowInstances
                 .Include(i => i.WorkflowTemplate)
                 .Include(i => i.TaskInstances)
                     .ThenInclude(ti => ti.WorkflowTask)
+                .Where(expression ?? (i => true))
                 .OrderByDescending(i => i.StartedAt)
                 .ToListAsync();
         }
 
-        public async Task<WorkflowInstance> GetByIdAsync(int id)
-        {
-            return await _context.WorkflowInstances.FindAsync(id);
-        }
-
-        public async Task<WorkflowInstance> GetByIdWithDetailsAsync(int id)
+        public async Task<WorkflowInstance> GetById(int id)
         {
             return await _context.WorkflowInstances
                 .Include(i => i.WorkflowTemplate)
@@ -40,32 +38,21 @@ namespace Abacus.API.Repositories.Impl
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
-        public async Task<IEnumerable<WorkflowInstance>> GetByEntityAsync(string entityId, string entityType)
-        {
-            return await _context.WorkflowInstances
-                .Include(i => i.WorkflowTemplate)
-                .Include(i => i.TaskInstances)
-                    .ThenInclude(ti => ti.WorkflowTask)
-                .Where(i => i.EntityId == entityId && i.EntityType == entityType)
-                .OrderByDescending(i => i.StartedAt)
-                .ToListAsync();
-        }
-
-        public async Task<WorkflowInstance> CreateAsync(WorkflowInstance instance)
+        public async Task<WorkflowInstance> Create(WorkflowInstance instance)
         {
             _context.WorkflowInstances.Add(instance);
             await _context.SaveChangesAsync();
             return instance;
         }
 
-        public async Task<WorkflowInstance> UpdateAsync(WorkflowInstance instance)
+        public async Task<WorkflowInstance> Update(WorkflowInstance instance)
         {
             _context.Entry(instance).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return instance;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task Delete(int id)
         {
             var instance = await _context.WorkflowInstances.FindAsync(id);
             if (instance != null)
@@ -73,19 +60,6 @@ namespace Abacus.API.Repositories.Impl
                 _context.WorkflowInstances.Remove(instance);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<IEnumerable<WorkflowInstance>> GetRunningInstancesAsync()
-        {
-            return await _context.WorkflowInstances
-                .Include(i => i.WorkflowTemplate)
-                    .ThenInclude(t => t.Tasks)
-                .Include(i => i.WorkflowTemplate)
-                    .ThenInclude(t => t.Transitions)
-                .Include(i => i.TaskInstances)
-                    .ThenInclude(ti => ti.WorkflowTask)
-                .Where(i => i.Status == WorkflowStatus.Running)
-                .ToListAsync();
         }
     }
 }

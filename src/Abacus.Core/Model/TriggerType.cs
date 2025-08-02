@@ -1,6 +1,6 @@
 // Models/WorkflowTemplate.cs
 // Models/WorkflowTransition.cs
-namespace Abacus.API.Model
+namespace Abacus.Core.Model
 {
     public enum TriggerType
     {

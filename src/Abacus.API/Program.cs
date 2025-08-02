@@ -1,10 +1,15 @@
-using Abacus.API.Repositories;
-using Abacus.API.Services;
+using Abacus.API.Contracts;
 using Abacus.API.Data;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Abacus.API.Services.Impl;
 using Abacus.API.Repositories.Impl;
+using Abacus.Core;
+using Abacus.Core.Model;
+using Abacus.Core.Services;
+using Abacus.Core.Services.Impl;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using TaskInstance = Abacus.Core.Model.TaskInstance;
+using WorkflowInstance = Abacus.Core.Model.WorkflowInstance;
+using WorkflowTemplate = Abacus.Core.Model.WorkflowTemplate;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,17 +44,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<WorkflowDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Main")));
 
-// Add AutoMapper
-builder.Services.AddAutoMapper(config => config.AddProfile(typeof(MappingProfile)));
-
-// Add repositories
-builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
-builder.Services.AddScoped<IInstanceRepository, InstanceRepository>();
-builder.Services.AddScoped<ITaskInstanceRepository, TaskInstanceRepository>();
-
-// Add services
-builder.Services.AddScoped<ITemplateService, TemplateService>();
-builder.Services.AddScoped<IExecutionService, ExecutionService>();
+builder.Services.AddAbacus(configure =>
+{
+    configure
+        .WithTemplates(c => new TemplateRepository(c.GetRequiredService<WorkflowDbContext>()))
+        .WithInstances(c => new InstanceRepository(c.GetRequiredService<WorkflowDbContext>()))
+        .WithTasks(c => new TaskInstanceRepository(c.GetRequiredService<WorkflowDbContext>()));
+});
 
 // Add CORS
 builder.Services.AddCors(options =>

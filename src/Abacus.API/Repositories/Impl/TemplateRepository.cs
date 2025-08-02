@@ -1,10 +1,12 @@
+using System.Linq.Expressions;
 using Abacus.API.Data;
-using Abacus.API.Model;
+using Abacus.Core;
+using Abacus.Core.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Abacus.API.Repositories.Impl
 {
-    public class TemplateRepository : ITemplateRepository
+    public class TemplateRepository : IDataProvider<WorkflowTemplate>
     {
         private readonly WorkflowDbContext _context;
 
@@ -13,20 +15,16 @@ namespace Abacus.API.Repositories.Impl
             _context = context;
         }
 
-        public async Task<IEnumerable<WorkflowTemplate>> GetAllAsync()
+        public async Task<IEnumerable<WorkflowTemplate>> GetAll(Expression<Func<WorkflowTemplate, bool>> expression = null)
         {
             return await _context.WorkflowTemplates
                 .Include(t => t.Tasks)
                 .Include(t => t.Transitions)
+                .Where(expression ?? (t => true))
                 .ToListAsync();
         }
 
-        public async Task<WorkflowTemplate> GetByIdAsync(int id)
-        {
-            return await _context.WorkflowTemplates.FindAsync(id);
-        }
-
-        public async Task<WorkflowTemplate> GetByIdWithDetailsAsync(int id)
+        public async Task<WorkflowTemplate> GetById(int id)
         {
             return await _context.WorkflowTemplates
                 .Include(t => t.Tasks)
@@ -37,7 +35,7 @@ namespace Abacus.API.Repositories.Impl
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<WorkflowTemplate> CreateAsync(WorkflowTemplate template)
+        public async Task<WorkflowTemplate> Create(WorkflowTemplate template)
         {
             template.CreatedAt = DateTime.UtcNow;
             template.UpdatedAt = DateTime.UtcNow;
@@ -47,7 +45,7 @@ namespace Abacus.API.Repositories.Impl
             return template;
         }
 
-        public async Task<WorkflowTemplate> UpdateAsync(WorkflowTemplate template)
+        public async Task<WorkflowTemplate> Update(WorkflowTemplate template)
         {
             template.UpdatedAt = DateTime.UtcNow;
 
@@ -56,7 +54,7 @@ namespace Abacus.API.Repositories.Impl
             return template;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task Delete(int id)
         {
             var template = await _context.WorkflowTemplates.FindAsync(id);
             if (template != null)
@@ -64,11 +62,6 @@ namespace Abacus.API.Repositories.Impl
                 _context.WorkflowTemplates.Remove(template);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.WorkflowTemplates.AnyAsync(e => e.Id == id);
         }
     }
 }

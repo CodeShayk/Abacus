@@ -1,3 +1,5 @@
+using Abacus.Core.Model;
+
 namespace Abacus.API.Contracts
 {
     public class TaskInstance
@@ -35,7 +37,7 @@ namespace Abacus.API.Contracts
         public string Type { get; set; }
     }
 
-    public class TaskOutcome
+    public class TaskOutcome : Core.Model.TaskOutcome
     {
         public string Id { get; set; }
         public string Name { get; set; }

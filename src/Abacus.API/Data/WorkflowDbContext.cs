@@ -1,4 +1,4 @@
-using Abacus.API.Model;
+using Abacus.Core.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Abacus.API.Data
@@ -46,7 +46,7 @@ namespace Abacus.API.Data
             modelBuilder.Entity<WorkflowTransition>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.TriggerType).HasConversion<string>();
+                entity.Property(e => e.Trigger.TriggerType).HasConversion<string>();
 
                 entity.HasOne(e => e.WorkflowTemplate)
                     .WithMany(e => e.Transitions)
@@ -69,15 +69,15 @@ namespace Abacus.API.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Status).HasConversion<string>();
-                entity.Property(e => e.EntityId).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.EntityType).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Context.Id).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Context.Type).IsRequired().HasMaxLength(100);
 
                 entity.HasOne(e => e.WorkflowTemplate)
                     .WithMany(e => e.Instances)
                     .HasForeignKey(e => e.WorkflowTemplateId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasIndex(e => new { e.EntityId, e.EntityType });
+                entity.HasIndex(e => new { e.Context.Id, e.Context.Type });
             });
 
             // TaskInstance configuration
