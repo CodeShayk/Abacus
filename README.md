@@ -16,7 +16,7 @@ Simple Workflow framework in .Net
 - `Task` is an unit of work that needs to be completed and can have an outcome associated upon completion.
 - `Workflow Instance` is actual execution of workflow template triggered by an event on the instance of associated entity. Instance persists the current state of the workflow for the entity instance.
 - Sequences of Tasks could be configured as multiple `transitions` with triggers driving transitions at different levels of branching.
-- Tasks could be `triggered` by an `outcome` of previous task or a `domain event` on the workflow associated entity.
+- Tasks could be `triggered` by an `outcome` of previous task on the transition and could have `delayed` or `immediate` processing of transition.
 
 ### Example Workflow
 ![Abscus.Example](images/abscus.example.png)
