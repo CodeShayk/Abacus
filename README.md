@@ -1,6 +1,6 @@
-# <img src="https://github.com/CodeShayk/abacus.net/blob/master/images/ninja-icon-16.png" alt="ninja" style="width:30px;"/> Abacus v1.0.0
+# <img src="https://github.com/CodeShayk/abacus/blob/master/images/ninja-icon-16.png" alt="ninja" style="width:30px;"/> Abacus v1.0.0
 [![NuGet version](https://badge.fury.io/nu/abacus.svg)](https://badge.fury.io/nu/abacus) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/codeshayk/abacus/blob/master/License.md) [![build-master](https://github.com/codeshayk/abacus/actions/workflows/Build-Master.yml/badge.svg)](https://github.com/codeshayk/abacus/actions/workflows/Build-Master.yml) [![GitHub Release](https://img.shields.io/github/v/release/codeshayk/abacus?logo=github&sort=semver)](https://github.com/codeshayk/abacus/releases/latest)
-[![CodeQL](https://github.com/codeshayk/abacus/actions/workflows/codeql.yml/badge.svg)](https://github.com/codeshayk/abacus/actions/workflows/codeql.yml) [![.Net](https://img.shields.io/badge/.Net-8.0-blue)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+[![CodeQL](https://github.com/codeshayk/abacus/actions/workflows/codeql.yml/badge.svg)](https://github.com/codeshayk/abacus/actions/workflows/codeql.yml) [![.Net](https://img.shields.io/badge/.Net-8.0-blue)](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 
 Simple Workflow framework in .Net
 > Allows creating workflow templates with tasks transitions, triggered by outcomes of constituent tasks and entity actions linked to workflow (such as create, update or delete of linked entity).
@@ -17,5 +17,30 @@ Simple Workflow framework in .Net
 ### Example Workflow
 ![Abscus.Example](images/abscus.example.png)
 
-### Implementation
-- Please visit [wiki](https://github.com/CodeShayk/Abacus/wiki) pages for details.
+## Getting Started
+### Installation
+nuget add package SourceFlow.Net
+> - dotnet add package abacus
+> - dotnet add package abacus.SqlServer (to be released)
+> - or your preferred storage
+
+### Developer Guide
+This comprehensive guide provides detailed information about the SourceFlow.Net framework, covering everything from basic concepts to advanced implementation patterns and troubleshooting guidelines.
+
+Please click on [Developer Guide](https://github.com/CodeShayk/abacus/wiki) for complete details.
+## Support
+If you are having problems, please let me know by [raising a new issue](https://github.com/CodeShayk/abacus/issues/new/choose).
+
+## License
+This project is licensed with the [MIT license](LICENSE).
+
+## Contributing
+We welcome contributions! Please see our Contributing Guide for details.
+- 🐛 Bug Reports - Create an [issue](https://github.com/CodeShayk/abacus/issues/new/choose)
+- 💡 Feature Requests - Start a discussion
+- 📝 Documentation - Help improve our [docs](https://github.com/CodeShayk/abacus/wiki)
+- 💻 Code - Submit pull requests
+
+## Credits
+Thank you for reading. Please fork, explore, contribute and report. Happy Coding !! :)
+
