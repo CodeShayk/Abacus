@@ -21,7 +21,7 @@ namespace Abacus.API.Controllers
             }
             catch (KeyNotFoundException)
             {
-                return NotFound($"Task instance with ID {id} not found");
+                return NotFound($"Payload instance with ID {id} not found");
             }
             catch (Exception ex)
             {

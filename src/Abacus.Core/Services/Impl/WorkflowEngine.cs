@@ -1,26 +1,32 @@
 using System.Linq.Expressions;
 using System.Text.Json;
+using Abacus.Core.Messaging;
 using Abacus.Core.Model;
+using DomainEvents;
+using DomainEvents.Impl;
 using Microsoft.Extensions.Logging;
 
 namespace Abacus.Core.Services.Impl
 {
-    public class WorkflowEngine : IWorkflowEngine
+    internal class WorkflowEngine : IWorkflowEngine
     {
         private readonly IDataProvider<WorkflowInstance> _instanceRepository;
         private readonly IDataProvider<WorkflowTemplate> _templateRepository;
-        private readonly IDataProvider<TaskInstance> _taskInstanceRepository;
+        private readonly IDataProvider<TaskInstance> _taskIRepository;
+        private readonly IPublisher _eventPublisher;
         private readonly ILogger<IWorkflowEngine> _logger;
 
         public WorkflowEngine(
             IDataProvider<WorkflowInstance> instanceRepository,
             IDataProvider<WorkflowTemplate> templateRepository,
-            IDataProvider<TaskInstance> taskInstanceRepository,
+            IDataProvider<TaskInstance> taskRepository,
+            IPublisher eventPublisher,
             ILogger<IWorkflowEngine> logger)
         {
             _instanceRepository = instanceRepository;
             _templateRepository = templateRepository;
-            _taskInstanceRepository = taskInstanceRepository;
+            _taskIRepository = taskRepository;
+            _eventPublisher = eventPublisher;
             _logger = logger;
         }
 
@@ -74,26 +80,31 @@ namespace Abacus.Core.Services.Impl
 
         public async Task CompleteTask(CompleteTask request)
         {
-            var taskInstance = await _taskInstanceRepository.GetById(request.TaskInstanceId);
-            if (taskInstance == null)
-                throw new KeyNotFoundException($"Task instance with ID {request.TaskInstanceId} not found");
+            var task = await _taskIRepository.GetById(request.TaskInstanceId);
+            if (task == null)
+                throw new KeyNotFoundException($"Payload instance with ID {request.TaskInstanceId} not found");
 
-            if (taskInstance.Status != TaskInstanceStatus.Pending && taskInstance.Status != TaskInstanceStatus.Running)
-                throw new InvalidOperationException($"Task instance is in {taskInstance.Status} status and cannot be completed");
+            if (task.Status != TaskInstanceStatus.Pending && task.Status != TaskInstanceStatus.Running)
+                throw new InvalidOperationException($"Payload instance is in {task.Status} status and cannot be completed");
 
             // Update task instance
-            taskInstance.Status = TaskInstanceStatus.Completed;
-            taskInstance.CompletedAt = DateTime.UtcNow;
-            taskInstance.Outcome = request.Outcome;
-            taskInstance.Output = request.Output;
+            task.Status = TaskInstanceStatus.Completed;
+            task.CompletedAt = DateTime.UtcNow;
+            task.Outcome = request.Outcome;
+            task.Output = request.Output;
 
-            await _taskInstanceRepository.Update(taskInstance);
+            await _taskIRepository.Update(task);
 
             // Process transitions
-            await ProcessTransitionsAsync(taskInstance);
+            await ProcessTransitionsAsync(task);
 
             // Check if workflow is complete
-            await CheckWorkflowCompletionAsync(taskInstance.WorkflowInstanceId);
+            await CheckWorkflowCompletionAsync(task.WorkflowInstanceId);
+
+            await _eventPublisher.RaiseAsync(new TaskCompleted
+            {
+                Payload = task
+            });
         }
 
         public async Task ProcessPendingTasks(int WorkflowInstanceId)
@@ -103,7 +114,7 @@ namespace Abacus.Core.Services.Impl
             var body = Expression.Equal(propertyValue, Expression.Constant(WorkflowInstanceId));
             var expression = Expression.Lambda<Func<TaskInstance, bool>>(body, item);
 
-            var pendingTasks = await _taskInstanceRepository.GetAll(expression);
+            var pendingTasks = await _taskIRepository.GetAll(expression);
 
             foreach (var task in pendingTasks.Where(t => t.Status == TaskInstanceStatus.Pending))
                 // Check if task should start (e.g., delay has passed)
@@ -111,7 +122,7 @@ namespace Abacus.Core.Services.Impl
                 {
                     task.Status = TaskInstanceStatus.Running;
                     task.StartedAt = DateTime.UtcNow;
-                    await _taskInstanceRepository.Update(task);
+                    await _taskIRepository.Update(task);
 
                     // For automatic tasks, process them immediately
                     if (task.WorkflowTask.Type == TaskType.Automatic)
@@ -121,9 +132,9 @@ namespace Abacus.Core.Services.Impl
 
         public async Task<TaskInstance> GetTask(int taskInstanceId)
         {
-            var taskInstance = await _taskInstanceRepository.GetById(taskInstanceId);
+            var taskInstance = await _taskIRepository.GetById(taskInstanceId);
             if (taskInstance == null)
-                throw new KeyNotFoundException($"Task instance with ID {taskInstanceId} not found");
+                throw new KeyNotFoundException($"Payload instance with ID {taskInstanceId} not found");
 
             return taskInstance;
         }
@@ -144,7 +155,7 @@ namespace Abacus.Core.Services.Impl
             else
                 taskInstance.DueAt = DateTime.UtcNow;
 
-            await _taskInstanceRepository.Create(taskInstance);
+            await _taskIRepository.Create(taskInstance);
         }
 
         private async Task ProcessTransitionsAsync(TaskInstance completedTask)
@@ -216,10 +227,10 @@ namespace Abacus.Core.Services.Impl
 
                 taskInstance.Status = TaskInstanceStatus.Completed;
                 taskInstance.CompletedAt = DateTime.UtcNow;
-                //taskInstance.Outcome = ;
+                //task.Outcome = ;
                 taskInstance.Output = JsonSerializer.Serialize(new { ProcessedAt = DateTime.UtcNow });
 
-                await _taskInstanceRepository.Update(taskInstance);
+                await _taskIRepository.Update(taskInstance);
                 await ProcessTransitionsAsync(taskInstance);
                 await CheckWorkflowCompletionAsync(taskInstance.WorkflowInstanceId);
             }
@@ -229,8 +240,18 @@ namespace Abacus.Core.Services.Impl
 
                 taskInstance.Status = TaskInstanceStatus.Failed;
                 taskInstance.ErrorMessage = ex.Message;
-                await _taskInstanceRepository.Update(taskInstance);
+                await _taskIRepository.Update(taskInstance);
             }
+        }
+
+        Task IWorkflowEngine.ProgressWorkflows(TaskInstance payload)
+        {
+            if (payload == null)
+                throw new ArgumentNullException(nameof(payload));
+
+            var instances = _instanceRepository.GetAll();
+
+            return Task.CompletedTask;
         }
     }
 }

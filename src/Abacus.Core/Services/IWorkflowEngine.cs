@@ -46,8 +46,15 @@ namespace Abacus.Core.Services
         /// <summary>
         /// Retrieves a specific task instance by its identifier.
         /// </summary>
-        /// <param name="taskId">Workflow Instance Task Identifier</param>
+        /// <param name="taskId">Workflow Instance Payload Identifier</param>
         /// <returns></returns>
         Task<TaskInstance> GetTask(int taskId);
+
+        /// <summary>
+        /// Progress subscribed workflows for task completed.
+        /// </summary>
+        /// <param name="payload">Completed Task</param>
+        /// <returns></returns>
+        Task ProgressWorkflows(TaskInstance payload);
     }
 }

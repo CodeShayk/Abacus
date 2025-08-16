@@ -2,7 +2,7 @@ using Abacus.Core.Model;
 
 namespace Abacus.Core.Services.Impl
 {
-    public class TemplateManager : ITemplateManager
+    internal class TemplateManager : ITemplateManager
     {
         private readonly IDataProvider<WorkflowTemplate> templateProvider;
 
@@ -21,7 +21,7 @@ namespace Abacus.Core.Services.Impl
         {
             var template = await templateProvider.GetById(id);
             if (template == null)
-                throw new KeyNotFoundException($"Workflow template with ID {id} not found");
+                throw new KeyNotFoundException($"Workflow template with Id {id} not found");
 
             return template;
         }

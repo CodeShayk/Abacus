@@ -1,6 +1,9 @@
+using Abacus.Core.Messaging;
 using Abacus.Core.Model;
 using Abacus.Core.Services;
 using Abacus.Core.Services.Impl;
+using DomainEvents;
+using DomainEvents.Impl;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abacus.Core
@@ -12,6 +15,10 @@ namespace Abacus.Core
             // Add services
             services.AddScoped<ITemplateManager, TemplateManager>();
             services.AddScoped<IWorkflowEngine, WorkflowEngine>();
+            services.AddTransient<IPublisher, Publisher>();
+
+            // register all implemented event handlers.
+            services.AddTransient<IHandler, TaskCompletedHandler>();
 
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration), "Abacus configuration action cannot be null");
