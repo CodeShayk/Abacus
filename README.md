@@ -1,8 +1,9 @@
-# <img src="https://github.com/CodeShayk/abacus/blob/master/images/ninja-icon-16.png" alt="ninja" style="width:30px;"/> Abacus v1.0.0
-[![NuGet version](https://badge.fury.io/nu/abacus.svg)](https://badge.fury.io/nu/abacus) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/codeshayk/abacus/blob/master/License.md) 
-[![build-master](https://github.com/codeshayk/abacus/actions/workflows/Master-Build.yml/badge.svg)](https://github.com/codeshayk/abacus/actions/workflows/Master-Build.yml) 
-[![GitHub Release](https://img.shields.io/github/v/release/codeshayk/abacus?logo=github&sort=semver)](https://github.com/codeshayk/abacus/releases/latest)
-[![CodeQL](https://github.com/codeshayk/abacus/actions/workflows/Master-CodeQL.yml/badge.svg)](https://github.com/codeshayk/abacus/actions/workflows/Master-CodeQL.yml) 
+# <img src="https://github.com/CodeShayk/abacus/blob/master/images/ninja-icon-16.png" alt="ninja" style="width:30px;"/> Abacus.Net v1.0.0
+[![NuGet version](https://badge.fury.io/nu/Abacus.Net.svg)](https://badge.fury.io/nu/Abacus.Net) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/codeshayk/Abacus.Net/blob/master/License.md) 
+[![build-master](https://github.com/codeshayk/Abacus.Net/actions/workflows/Master-Build.yml/badge.svg)](https://github.com/codeshayk/Abacus.Net/actions/workflows/Master-Build.yml) 
+[![GitHub Release](https://img.shields.io/github/v/release/codeshayk/Abacus.Net?logo=github&sort=semver)](https://github.com/codeshayk/Abacus.Net/releases/latest)
+[![CodeQL](https://github.com/codeshayk/Abacus.Net/actions/workflows/Master-CodeQL.yml/badge.svg)](https://github.com/codeshayk/Abacus.Net/actions/workflows/Master-CodeQL.yml) 
 [![.Net](https://img.shields.io/badge/.Net-9.0-blue)](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 
 Simple Workflow framework in .Net
@@ -23,25 +24,25 @@ Simple Workflow framework in .Net
 ## Getting Started
 ### Installation
 nuget add package SourceFlow.Net
-> - dotnet add package abacus
-> - dotnet add package abacus.SqlServer (to be released)
-> - or your preferred storage
+ - dotnet add package Abacus.Net
+ - dotnet add package Abacus.Net.SqlServer (to be released)
+ - or your preferred storage
 
 ### Developer Guide
 This comprehensive guide provides detailed information about the SourceFlow.Net framework, covering everything from basic concepts to advanced implementation patterns and troubleshooting guidelines.
 
-Please click on [Developer Guide](https://github.com/CodeShayk/abacus/wiki) for complete details.
+Please click on [Developer Guide](https://github.com/CodeShayk/Abacus.Net/wiki) for complete details.
 ## Support
-If you are having problems, please let me know by [raising a new issue](https://github.com/CodeShayk/abacus/issues/new/choose).
+If you are having problems, please let me know by [raising a new issue](https://github.com/CodeShayk/Abacus.Net/issues/new/choose).
 
 ## License
 This project is licensed with the [MIT license](LICENSE).
 
 ## Contributing
 We welcome contributions! Please see our Contributing Guide for details.
-- 🐛 Bug Reports - Create an [issue](https://github.com/CodeShayk/abacus/issues/new/choose)
+- 🐛 Bug Reports - Create an [issue](https://github.com/CodeShayk/Abacus.Net/issues/new/choose)
 - 💡 Feature Requests - Start a discussion
-- 📝 Documentation - Help improve our [docs](https://github.com/CodeShayk/abacus/wiki)
+- 📝 Documentation - Help improve our [docs](https://github.com/CodeShayk/Abacus.Net/wiki)
 - 💻 Code - Submit pull requests
 
 ## Credits
